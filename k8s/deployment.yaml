@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector
+  namespace: otelcol-kube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-collector
+  template:
+    metadata:
+      labels:
+        app: otel-collector
+    spec:
+      containers:
+      - name: otel-collector
+        image: otel/opentelemetry-collector:latest
+        args: ["--config=/conf/otel-collector-config"]
+        volumeMounts:
+        - name: otel-collector-config-vol
+          mountPath: /conf
+        - name: log-volume
+          mountPath: /var/log/otelcol
+      volumes:
+      - name: otel-collector-config-vol
+        configMap:
+          name: otel-collector-conf
+      - name: log-volume
+        emptyDir: {}
