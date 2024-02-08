@@ -3,3 +3,5 @@
 ```
 kubectl create namespace otelcol-kube
 ```
+
+(╯°□°)╯︵ ┻━┻
