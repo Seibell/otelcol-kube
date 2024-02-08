@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki
+  namespace: otelcol-kube
+spec:
+  selector:
+    matchLabels:
+      name: loki
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: loki
+    spec:
+      containers:
+      - name: loki
+        image: grafana/loki:latest
+        args: ["-config.file=/etc/loki/loki.yaml"]
+        ports:
+        - containerPort: 3100
+        volumeMounts:
+        - name: loki-config
+          mountPath: /etc/loki
+          readOnly: true
+        - name: loki-storage
+          mountPath: /loki
+        securityContext:
+          runAsUser: 0
+      volumes:  # This should be aligned with 'containers', not nested inside it
+      - name: loki-config
+        configMap:
+          name: loki-config
+      - name: loki-storage
+        emptyDir: {}
